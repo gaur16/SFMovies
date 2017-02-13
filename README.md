@@ -11,6 +11,9 @@ A light-weight Android app that facilitates autocomplete search and smooth UI fo
   - **Autocomplete** : To provide suggestions to user while searching the map (through Auto-complete)
   - **UX** : To ensure clean material design implementation, and a smooth UX
 
+### Application Architecture
+The App is built on a simple MVC design. The Model package consists of the ```SFLocation``` and ```SFGoogleResponse``` objects. In addition to this, a single fragment class ```SFMap``` inflates the ```MapView``` and the ```AutoCompleteSearchView```. ```Controller```, ```SFGeocodeGoogle``` and ```SFGetLocationIntentService``` together constitute the controller.
+
 ### Implementation & Challenges
 ##### Map
 The location information provided in the data was in street address format. For marking on the map, each instance of location had to be converted to ```LatLng``` object. <br />
