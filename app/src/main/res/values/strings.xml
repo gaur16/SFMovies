@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SF Movies</string>
+    <string name="title_activity_sfmovies_base">SF Movies</string>
+    <string name="db_api_token">PhFBtaDaxcaA2ChmpOYF6TLIk</string>
+    <string name="BASE_URL">https://data.sfgov.org</string>
+    <string name="MAP_URL">https://maps.googleapis.com</string>
+</resources>

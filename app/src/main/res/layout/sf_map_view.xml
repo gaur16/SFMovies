@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1">
+
+            <com.bignerdrench.android.sfmovies.SFView.SFAutoComplete
+                android:id="@+id/sf_auto_complete"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:imeOptions="flagNoExtractUi|actionSearch"
+                android:hint="Enter Location, Movie title etc."
+                android:textColorHint="@color/common_plus_signin_btn_text_light_disabled"
+                android:maxLines="1"
+                android:ems="10"/>
+
+            <ProgressBar
+                android:id="@+id/loading"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/fragment_embedded_map_view_mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"/>
+        </LinearLayout>
+
+    </LinearLayout>
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:clipToPadding="true"
+        android:elevation="4dp"
+        android:background="@android:color/white"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <LinearLayout
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:gravity="left">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Movie Title"
+                    android:gravity="left"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/title_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/release_year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:gravity="left">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Released"
+                    android:gravity="left"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/release_year_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:id="@+id/location"
+                android:gravity="left">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:gravity="left"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/location_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fun_fact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:gravity="left">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fun Fact"
+                    android:gravity="left"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/fun_fact_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="left"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/director"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:gravity="left">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Director"
+                    android:gravity="left"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/director_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/writer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:gravity="left">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Writer"
+                    android:gravity="left"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/writer_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/production_house"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+                android:gravity="left">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Production"
+                    android:gravity="left"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/production_house_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>
