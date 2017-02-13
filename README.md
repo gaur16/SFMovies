@@ -13,8 +13,8 @@ A light-weight Android app that facilitates autocomplete search and smooth UI fo
 
 #### Implementation & Challenges
 ###### Map
-The location information provided in the data was in street address format. For marking on the map, each instance of location had to be converted to ```LatLng``` object. 
-Android provides a ```android.location.Geocoder``` class for handling geocoding and reverse geocoding, but it performs poorly in case of handling address to geocode conversion (barely 50% success rate). 
+The location information provided in the data was in street address format. For marking on the map, each instance of location had to be converted to ```LatLng``` object. <br />
+Android provides a ```android.location.Geocoder``` class for handling geocoding and reverse geocoding, but it performs poorly in case of handling address to geocode conversion (barely 50% success rate). <br />
 The app therefore, directly fetches Geocoded values for a given address string by hitting Google Maps API for Geocoded data.
 
 ```sh
@@ -31,13 +31,14 @@ The [Socrata Open Data API (SODA)](https://dev.socrata.com/foundry/data.sfgov.or
 ```sh
 https://soda.demo.socrata.com/resource/4tka-6guv.json?$q=Islands
 ```
-The App uses ```SearchCompleteAdapter``` to populate the list of suggestions. The SearchCompleteAdapter, in its implementation of ```performFiltering``` method, creates a ```Controller``` object and populates the ```filterResults``` in its Callback. Next it calls ```publishResults``` method to populate the list of suggested results, which the user sees after a small delay.
+The App uses ```SearchCompleteAdapter``` to populate the list of suggestions. The SearchCompleteAdapter, in its implementation of ```performFiltering``` method, creates a ```Controller``` object and populates the ```filterResults``` in its Callback. Next it calls ```publishResults``` method to populate the list of suggested results, which the user sees after a small delay. <br />
 In order to prevent sending of multiple requests when user is typing a query, a ```DEFAULT_AUTOCOMPLETE_DELAY``` of 750ms is added in the SFAutoComplete class. This prevents repition of similar requests to the server as user inputs a string.
 
 ###### UX
-The App handles this un-indexed dataset by first fetching the list of all possible addresses. After filtering out the redundancy (duplicates and empty fields), we launch a background service that fetches the encoded value of each address and displays on the map. 
-![Alt text](SFMovies/Screenshot_20170213-023527.png?raw=true "SFMovies Launched")
-Since the geocoding runs in the background, it becomes feasible to handle events of the main thread, i.e., AutoCompleteSearch. The user therefore doesn't have to wait for the entire Map to load before he can begin exploring. 
+The App handles this un-indexed dataset by first fetching the list of all possible addresses. After filtering out the redundancy (duplicates and empty fields), we launch a background service that fetches the encoded value of each address and displays on the map. <br />
+
+Since the geocoding runs in the background, it becomes feasible to handle events of the main thread, i.e., AutoCompleteSearch. The user therefore doesn't have to wait for the entire Map to load before he can begin exploring. <br/>
+
 Also, the app doesn't shut down when pressed back button from the main screen, hence enhancing ease of navigation.
 
 #### Further Enhancements
