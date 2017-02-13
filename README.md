@@ -36,6 +36,7 @@ In order to prevent sending of multiple requests when user is typing a query, a 
 
 ###### UX
 The App handles this un-indexed dataset by first fetching the list of all possible addresses. After filtering out the redundancy (duplicates and empty fields), we launch a background service that fetches the encoded value of each address and displays on the map. 
+![Alt text](SFMovies/Screenshot_20170213-023527.png?raw=true "SFMovies Launched")
 Since the geocoding runs in the background, it becomes feasible to handle events of the main thread, i.e., AutoCompleteSearch. The user therefore doesn't have to wait for the entire Map to load before he can begin exploring. 
 Also, the app doesn't shut down when pressed back button from the main screen, hence enhancing ease of navigation.
 
