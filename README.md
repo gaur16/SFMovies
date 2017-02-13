@@ -40,11 +40,11 @@ Since the geocoding runs in the background, it becomes feasible to handle events
 Also, the app doesn't shut down when pressed back button from the main screen, hence enhancing ease of navigation.
 
 #### Further Enhancements
-**Marker Clustering**
+###### Marker Clustering
 After loading 700 markers on the MapView, the UI tends to become slow. Hence, marker clustering needs to be implemented. 
 As of now, the App loads 350 locations to begin with. However, any location searched through Autocomplete Search can be viewed.
-**Refined Autocomplete**
+###### Refined Autocomplete
 The SODA API provides an SoQL function "like", that searches for substring for a given column. This could enable partial word searching. As of now, Autocomplete only works when user enters full/stemmed word present in DB. 
 A filter also needs to be implemented to prevent occurence of empty fields in the autocomplete suggestions.
-**Additional Features**
+###### Additional Features
 Feature to automatically embed wikipedia/IMDB link in the movie title, adding Google Maps Static Image with each Marker etc. are some additional features yet to be implemented.
