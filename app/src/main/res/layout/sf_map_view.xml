@@ -7,53 +7,43 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/map"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.1">
-
-            <com.bignerdrench.android.sfmovies.SFView.SFAutoComplete
-                android:id="@+id/sf_auto_complete"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:imeOptions="flagNoExtractUi|actionSearch"
-                android:hint="Enter Location, Movie title etc."
-                android:textColorHint="@color/common_plus_signin_btn_text_light_disabled"
-                android:maxLines="1"
-                android:ems="10"/>
-
-            <ProgressBar
-                android:id="@+id/loading"
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="0dp"
-                android:layout_weight="0.1"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/map"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
         <com.google.android.gms.maps.MapView
             android:id="@+id/fragment_embedded_map_view_mapview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible"/>
-        </LinearLayout>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:padding="12dip"
+            android:background="#AA000000"
+            android:textColor="#ffffffff"
+            android:text="Tap on any Marker to reveal the location title. \n (Tap to dismiss)"
+            android:textAlignment="center"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/desc_guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:padding="12dip"
+            android:background="#AA000000"
+            android:textColor="#ffffffff"
+            android:text="Swipe down to hide information. \n (Tap to dismiss)"
+            android:visibility="gone"
+            android:textAlignment="center"/>
+
+    </FrameLayout>
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"

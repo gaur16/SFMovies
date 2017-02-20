@@ -23,6 +23,10 @@ public interface SFApi {
                                              @Query("$q") String keyword,
                                              @Query("$limit") int limit);
 
+    @GET("resource/wwmu-gmzc.json")
+    Call<List<SFLocation>> getSearchForQuery(@Query("$where") String query,
+                                             @Query("$limit") int limit);
+
     @GET("/maps/api/geocode/json")
     Call<SFGoogleResponse> getGeoLocationDataGoogle(@Query("address") String address,
                                               @Query("key") String key);

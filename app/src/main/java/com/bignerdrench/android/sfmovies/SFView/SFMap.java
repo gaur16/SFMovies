@@ -5,12 +5,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -53,6 +58,10 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
     private SFLocation searchResult;
     private View mView;
     private BottomSheetBehavior mBottomSheetBehavior;
+    private TextView mDesc;
+    private TextView mDescGuide;
+    private Boolean mPrevious=false;
+    private SharedPreferences prefs;
 
     private TextView mTitle;
     private TextView mReleaseYear;
@@ -76,6 +85,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG,"onCreate");
         mView = inflater.inflate(R.layout.sf_map_view, container, false);
 
         mMapView = (MapView) mView.findViewById(R.id.fragment_embedded_map_view_mapview);
@@ -105,27 +115,41 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
 
         cm = new Controller(getResources().getString(R.string.BASE_URL));
 
-        final SFAutoComplete autoComplete = (SFAutoComplete) mView.findViewById(R.id.sf_auto_complete);
-        autoComplete.setThreshold(4);
-        autoComplete.setAdapter(new SearchCompleteAdapter(getActivity()));
-        autoComplete.setLoadingIndicator((android.widget.ProgressBar) mView.findViewById(R.id.loading));
-        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        intent = new Intent(getActivity(), SFGetLocationIntentService.class);
+
+        mDesc =(TextView) mView.findViewById(R.id.desc);
+        mDescGuide = (TextView) mView.findViewById(R.id.desc_guide);
+
+        mDesc.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                SFLocation place = (SFLocation) adapterView.getItemAtPosition(position);
-                autoComplete.setText(place.getLocations());
-                SFGeocodeGoogle sfg = new SFGeocodeGoogle(getContext(),place.getLocations(),getString(R.string.google_maps_key));
-                searchResult = place;
+            public void onClick(View v) {
+                mDesc.setVisibility(View.GONE);
             }
         });
 
-        intent = new Intent(getActivity(), SFGetLocationIntentService.class);
+        mDescGuide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDescGuide.setVisibility(View.GONE);
+            }
+        });
+
         return mView;
     }
 
     @Override
     public void onResume() {
+        Log.v(TAG,"onResume");
         if (mMapView != null) {
+            prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+            boolean previouslyStarted = prefs.getBoolean("previouslyStarted", false);
+            if(!previouslyStarted) {
+                mDesc.setVisibility(View.VISIBLE);
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putBoolean("previouslyStarted", Boolean.TRUE);
+                edit.commit();
+                setFirstTime(true);
+            }
             mMapView.onResume();
         }
         super.onResume();
@@ -133,6 +157,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
 
     @Override
     public void onPause() {
+        Log.v(TAG,"onPause");
         if (mMapView != null) {
             mMapView.onPause();
         }
@@ -142,6 +167,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
     //Unregistering broadcast receiver here
     @Override
     public void onDestroy() {
+        Log.v(TAG,"onDestroy");
         if (mMapView != null) {
             try {
                 mMapView.onDestroy();
@@ -156,6 +182,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
 
     @Override
     public void onLowMemory() {
+        Log.v(TAG,"onDestroy");
         super.onLowMemory();
         if (mMapView != null) {
             mMapView.onLowMemory();
@@ -164,6 +191,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG,"onSaveInstanceState");
         super.onSaveInstanceState(outState);
         if (mMapView != null) {
             mMapView.onSaveInstanceState(outState);
@@ -174,6 +202,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
     @Override
     public void onMapReady(GoogleMap googleMap) {
         //Map Ready: Starting Background service to fetch location data
+        Log.v(TAG,"onMapReady");
         cm.start(this, getResources().getString(R.string.db_api_token));
         mMap = googleMap;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.7749,-122.4194),15.0f));
@@ -184,18 +213,25 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
                 SFLocation sf = (SFLocation) marker.getTag();
                 setBottomSheetText(sf);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mDesc.setVisibility(View.GONE);
+                if(isFirstTime())
+                {
+                    mDescGuide.setVisibility(View.VISIBLE);
+                    setFirstTime(false);
+                }
             }
         });
     }
 
     @Override
     public void onFailure(Call<List<SFLocation>> call, Throwable t) {
-
+        Log.v(TAG,"onFailure");
     }
 
     //Response for fetching the result of AutoCompleteSearch
     @Override
     public void onResponse(Call<List<SFLocation>> call, Response<List<SFLocation>> response) {
+        Log.v(TAG,"onResponse");
         if(response.isSuccessful()) {
             List<SFLocation> recvdLocations = response.body();
             mRecvdList = new ArrayList<SFLocation>(new HashSet<SFLocation>(recvdLocations));        //removes repeated Locations
@@ -210,15 +246,31 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getBooleanExtra("isFromService",true))
+            Log.v(TAG,"onReceive");
+            Boolean flag1 = intent.getBooleanExtra("isFromSearch",false);
+            Boolean flag2 = intent.getBooleanExtra("isFromService",false);
+            Boolean flag3 = intent.getBooleanExtra("isSingleQuery",false);
+
+            if(flag1){
+                SFLocation location = intent.getParcelableExtra("place_from_search");
+                if(location != null)
+                {
+                    searchResult = location;
+                    SFGeocodeGoogle sfg = new SFGeocodeGoogle(getContext(),
+                                                            location.getLocations(),
+                                                            getString(R.string.google_maps_key));
+                }
+            }
+            if(flag2)
                 updateUI(intent);
-            else
+            if(flag3)
                 updateSingleMarker(intent);
         }
     };
 
     //Called when Map receives intent from Background service
     private void updateUI(Intent intent) {
+        Log.v(TAG,"updateUI");
         if(mMap!=null)
         {
             double latitude = intent.getDoubleExtra("lat", 0);
@@ -238,6 +290,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
 
     //Called when a single location is searched
     private void updateSingleMarker(Intent intent){
+        Log.v(TAG,"updateSingleMarker");
         if(mMap != null){
             double latitude = intent.getDoubleExtra("lat",0);
             double longitude = intent.getDoubleExtra("lng",0);
@@ -262,6 +315,7 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
     }
 
     private void setBottomSheetText(SFLocation sf){
+        Log.v(TAG,"setBottomSheetText");
         if(sf.getmTitle()!=null && !sf.getmTitle().isEmpty())
         {
             mTitle.setText(sf.getmTitle());
@@ -297,6 +351,60 @@ public class SFMap extends Fragment implements OnMapReadyCallback, Callback<List
             mProduction.setText(sf.getmProductionCompany());
         }
         else production_layout.setVisibility(View.GONE);
+    }
+
+    /*@Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.search_menu, menu);
+        MenuItem item = menu.findItem(R.id.search);
+
+        final SFAutoComplete autoComplete = (SFAutoComplete) item.getActionView();
+
+        *//*if(autoComplete!=null){
+        autoComplete.setThreshold(4);
+        autoComplete.setAdapter(new SearchCompleteAdapter(getActivity()));
+        autoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                SFLocation place = (SFLocation) adapterView.getItemAtPosition(position);
+                autoComplete.performCompletion();
+                SFGeocodeGoogle sfg = new SFGeocodeGoogle(getContext(), place.getLocations(), getString(R.string.google_maps_key));
+                searchResult = place;
+            }
+        });
+        }
+        else Log.v(TAG,"Autocomplete_Was_null");*//*
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+        */
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.v(TAG,"onOptionsItemSelected");
+        Intent intent = new Intent(getContext(),SFSearchViewActivity.class);
+        startActivity(intent);
+        return super.onOptionsItemSelected(item);
+    }
+
+    public Boolean isFirstTime(){
+        return mPrevious;
+    }
+
+    private void setFirstTime(Boolean previous){
+        mPrevious = previous;
     }
 }
 

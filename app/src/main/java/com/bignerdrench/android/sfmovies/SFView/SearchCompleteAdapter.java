@@ -1,6 +1,8 @@
 package com.bignerdrench.android.sfmovies.SFView;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import com.bignerdrench.android.sfmovies.R;
 import com.bignerdrench.android.sfmovies.SFController.Controller;
+import com.bignerdrench.android.sfmovies.SFController.SFGetLocationIntentService;
 import com.bignerdrench.android.sfmovies.SFModel.SFLocation;
 
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ import retrofit2.Response;
 
 public class SearchCompleteAdapter extends BaseAdapter implements Filterable {
 
-    private static final int MAX_RESULTS = 25;
+    private static final int MAX_RESULTS = 15;
     private Context mContext;
     private List<SFLocation> resultList = new ArrayList<SFLocation>();
     String TAG = "SearchCompleteAdapter";
@@ -70,11 +73,17 @@ public class SearchCompleteAdapter extends BaseAdapter implements Filterable {
             protected FilterResults performFiltering(final CharSequence constraint) {
                 final FilterResults filterResults = new FilterResults();
                 if (constraint != null) {
+
+                    Intent mIntent = new Intent(SFSearchView.BROADCAST_SEARCH);
+                    mIntent.putExtra("filteringStarted",true);
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(mIntent);
+
                     Controller cm = new Controller(mContext.getResources().getString(R.string.BASE_URL));
-                    cm.fetchForKeyword(new Callback<List<SFLocation>>() {
+                    cm.fetchForQuery(new Callback<List<SFLocation>>() {
                         @Override
                         public void onResponse(Call<List<SFLocation>> call, Response<List<SFLocation>> response) {
                             // Assign the data to the FilterResults
+                            Intent mIntent = new Intent(SFSearchView.BROADCAST_SEARCH);
                             if(response.isSuccessful())
                             {
                                 List<SFLocation> recvd = response.body();
@@ -87,14 +96,26 @@ public class SearchCompleteAdapter extends BaseAdapter implements Filterable {
                                     " "+r.getLocations());
                                 }
                                 publishResults(constraint,filterResults);
+                                if(!recvd.isEmpty())
+                                    mIntent.putExtra("success",true);
+                                else
+                                    mIntent.putExtra("success",false);
                             }
-                            else System.out.println(response.errorBody());
+                            else {System.out.println(response.errorBody());
+                            mIntent.putExtra("success",false);}
+
+                            mIntent.putExtra("filteringDone",true);
+                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(mIntent);
                         }
                         @Override
                         public void onFailure(Call<List<SFLocation>> call, Throwable t) {
                             Log.v(TAG,"Failed To Fetch data from server");
+                            Intent mIntent = new Intent(SFSearchView.BROADCAST_SEARCH);
+                            mIntent.putExtra("filteringFailed",true);
+                            LocalBroadcastManager.getInstance(mContext).sendBroadcast(mIntent);
+
                         }
-                    },constraint.toString(),MAX_RESULTS,mContext.getResources().getString(R.string.db_api_token));
+                    },constraint.toString(),"title",MAX_RESULTS,mContext.getResources().getString(R.string.db_api_token));
                 }
                 return filterResults;
             }

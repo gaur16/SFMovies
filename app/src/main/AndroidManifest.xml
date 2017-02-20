@@ -42,6 +42,9 @@
             android:name=".SFController.SFGetLocationIntentService"
             android:exported="false">
         </service>
+        <activity android:name=".SFView.SFSearchViewActivity"
+            android:label="SFSearch">
+        </activity>
 
     </application>
 

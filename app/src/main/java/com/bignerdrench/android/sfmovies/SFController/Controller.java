@@ -48,7 +48,7 @@ public class Controller {
     }
 
     public void start(SFMap fragment, String key) {
-        Call<List<SFLocation>> call = gerritAPI.getLocations(key,350);
+        Call<List<SFLocation>> call = gerritAPI.getLocations(key,300);
         call.enqueue(fragment);
     }
 
@@ -67,5 +67,11 @@ public class Controller {
     public void plotOnMap(Callback sf, String address, String key){
         Call<SFGoogleResponse> call = gerritAPI.getGeoLocationDataGoogle(address+", San Francisco, CA",key);
         call.enqueue(sf);
+    }
+
+    public void fetchForQuery(Callback callback, String keyword,String inColumn ,int limit, String key){
+        String query = inColumn+" like \'%"+keyword+"%\'";
+        Call<List<SFLocation>> call = gerritAPI.getSearchForQuery(query,limit);
+        call.enqueue(callback);
     }
 }

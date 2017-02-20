@@ -3,11 +3,10 @@
     android:layout_width="match_parent"
     android:orientation="vertical">
 
-
-    <fragment
-        android:id="@+id/activity_fragment_mapview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.bignerdrench.android.sfmovies.SFView.SFMap"/>
+        <fragment
+            android:id="@+id/activity_fragment_mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.bignerdrench.android.sfmovies.SFView.SFMap"/>
 
 </LinearLayout>

@@ -57,7 +57,7 @@ public class SFGeocodeGoogle implements Callback<SFGoogleResponse> {
                 Log.v(TAG,"lng : "+Longitude);
 
                 final Intent mIntent = new Intent(SFGetLocationIntentService.BROADCAST_ACTION);
-                mIntent.putExtra("isFromService",false);
+                mIntent.putExtra("isSingleQuery",true);
                 mIntent.putExtra("lat",Latitude);
                 mIntent.putExtra("lng",Longitude);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);

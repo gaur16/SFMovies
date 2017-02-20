@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 public class SFAutoComplete extends AutoCompleteTextView {
 
     private static final int MESSAGE_TEXT_CHANGED = 100;
-    private static final int DEFAULT_AUTOCOMPLETE_DELAY = 750;
+    private static final int DEFAULT_AUTOCOMPLETE_DELAY = 1200;
 
     private int mAutoCompleteDelay = DEFAULT_AUTOCOMPLETE_DELAY;
     private ProgressBar mLoadingIndicator;
@@ -38,18 +38,18 @@ public class SFAutoComplete extends AutoCompleteTextView {
 
     @Override
     protected void performFiltering(CharSequence text, int keyCode) {
-        if (mLoadingIndicator != null) {
+        /*if (mLoadingIndicator != null) {
             mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
+        }*/
         mHandler.removeMessages(MESSAGE_TEXT_CHANGED);
         mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_TEXT_CHANGED, text), mAutoCompleteDelay);
     }
 
     @Override
     public void onFilterComplete(int count) {
-        if (mLoadingIndicator != null) {
+        /*if (mLoadingIndicator != null) {
             mLoadingIndicator.setVisibility(View.GONE);
-        }
+        }*/
         super.onFilterComplete(count);
     }
 }
